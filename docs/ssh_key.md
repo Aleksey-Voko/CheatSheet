@@ -105,12 +105,10 @@ IdentityFile ~/.ssh/id_rsa_MrTrump
 
 **Connection for `Mr. Putin`**  
 `git@github.com:MrPutin/foreign_policy.git`  
-change to:  
+_change to:_  
 `git@mrputin.github.com:MrPutin/foreign_policy.git`
 
 **Connection for `Mr. Trump`**  
 `git@github.com:MrTrump/domestic_policy.git`  
-change to:  
+_change to:_  
 `git@mrtrump.github.com:MrTrump/domestic_policy.git`
-
----
