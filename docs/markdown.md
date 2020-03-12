@@ -301,5 +301,3 @@ _result:_
 [emoji-cheat-sheet](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md)
 
 https://www.webfx.com/tools/emoji-cheat-sheet/
-
----
