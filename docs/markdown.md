@@ -8,17 +8,27 @@ origin: [Writing on GitHub](https://help.github.com/en/github/writing-on-github)
 `**bold**` or `__bold__`  
 **bold** or **bold**
 
+---
+
 `*italic*` or `_italic_`  
 *italic* or _italic_
+
+---
 
 `***bold italic***`  
 ***bold italic***
 
+---
+
 `~~wrapped~~`  
 ~~wrapped~~
 
+---
+
 `_You **can** combine them_`  
 _You **can** combine them_
+
+---
 
 `\**Ignoring\** \_Markdown\_ \~~formatting\~~`  
 \**Ignoring\** \_Markdown\_ \~~formatting\~~
@@ -27,13 +37,31 @@ _You **can** combine them_
 
 ## URLs ##
 
+_code:_  
+`http://www.github.com/`  
+
+_result:_  
+http://www.github.com/
+
+---
+
+_or_
+
+_code:_  
 `[link to Google!](http://google.com)`  
+
+_result:_  
 [link to Google!](http://google.com)
 
-or
+---
 
-`http://www.github.com/`  
-http://www.github.com/
+_or with **title**:_
+
+_code:_  
+`[link to Google!](http://google.com "Goooooooooogle")`  
+
+_result:_  
+[link to Google!](http://google.com "Goooooooooogle")
 
 ---
 
@@ -47,11 +75,15 @@ http://www.github.com/
       1. Item 3b
 ```
 
+_result:_
+
 1. Item 1
 1. Item 2
 1. Item 3
    1. Item 3a
       1. Item 3b
+
+---
 
 ##### Unordered: #####
 ```
@@ -61,12 +93,16 @@ http://www.github.com/
     * Item 2b
 ```
 
+_result:_
+
 * Item 1
 * Item 2
   * Item 2a
     * Item 2b
 
-or
+---
+
+_or_
 
 ```
 - Item 1
@@ -74,6 +110,8 @@ or
   - Item 2a
     - Item 2b
 ```
+
+_result:_
 
 - Item 1
 - Item 2
@@ -87,17 +125,27 @@ or
 `# Header 1` or `# Header 1 #`  
 # Header 1
 
+---
+
 `## Header 2` or `## Header 2 ##`  
 ## Header 2
+
+---
 
 `### Header 3` or `### Header 3 ###`  
 ### Header 3
 
+---
+
 `#### Header 4` or `#### Header 4 ####`  
 #### Header 4
 
+---
+
 `##### Header 5` or `##### Header 5 #####`  
 ##### Header 5
+
+---
 
 `###### Header 6` or `###### Header 6 ######`  
 ###### Header 6
@@ -110,6 +158,8 @@ or
 > - Captain Janeway
 ```
 
+_result:_
+
 > Coffee. The finest organic suspension ever devised... I beat the Borg with it.
 > - Captain Janeway
 
@@ -117,18 +167,18 @@ or
 
 ## Code
 
-Inline code:
+_Inline code:_
 ```
 string: `var example = true`
 ```
 
-result:
+_result:_
 
 string: `var example = true`
 
 ---
 
-block of code:
+_block of code:_
 
 &#96;&#96;&#96;  
 if (isAwesome){  
@@ -136,7 +186,7 @@ if (isAwesome){
 }  
 &#96;&#96;&#96;
 
-result:
+_result:_
 ```
 if (isAwesome){  
     return true
@@ -145,7 +195,7 @@ if (isAwesome){
 
 ---
 
-syntax highlighting:
+_syntax highlighting:_
 
 &#96;&#96;&#96;python  
 def foo(bar):  
@@ -153,7 +203,7 @@ def foo(bar):
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return True  
 &#96;&#96;&#96;
 
-result:
+_result:_
 ```python
 def foo(bar):
     if not bar:
@@ -170,7 +220,7 @@ def foo(bar):
 - [ ] this is an incomplete item
 ```
 
-result:
+_result:_
 - [x] @mentions, #refs, [links](), **formatting**, and <del>tags</del> supported
 - [x] list syntax required (any unordered or ordered list supported)
 - [x] this is a complete item
@@ -179,7 +229,7 @@ result:
 ---
 
 ## Tables
-code:
+_code:_
 ```
 First Header | Second Header
 ------------ | -------------
@@ -187,7 +237,7 @@ Content from cell 1 | Content from cell 2
 Content in the first column | Content in the second column
 ```
 
-result:
+_result:_
 
 First Header | Second Header
 ------------ | -------------
@@ -196,9 +246,9 @@ Content in the first column | Content in the second column
 
 ---
 
-or
+_or_
 
-code:
+_code:_
 
 ```
 | Left-aligned | Center-aligned | Right-aligned |
@@ -207,7 +257,7 @@ code:
 | git diff     | git diff       | git diff      |
 ```
 
-result:
+_result:_
 
 | Left-aligned | Center-aligned | Right-aligned |
 | :---         |     :---:      |          ---: |
@@ -216,9 +266,9 @@ result:
 
 ---
 
-or
+_or_
 
-code:
+_code:_
 
 ```
 | Name     | Character |
@@ -227,7 +277,7 @@ code:
 | Pipe     | \|        |
 ```
 
-result:
+_result:_
 
 | Name     | Character |
 | ---      | ---       |
@@ -237,11 +287,11 @@ result:
 ---
 
 ## Images
-code:
+_code:_
 ```
 ![Image of Yaktocat](https://github.com/fluidicon.png)
 ```
-result:
+_result:_
 
 ![Image of Yaktocat](https://github.com/fluidicon.png)
 
