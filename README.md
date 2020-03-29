@@ -9,3 +9,4 @@
 
 * [Closures](core_python/closures.py)
 * [Decoration](core_python/decoration.py)
+* [Exceptions](core_python/exceptions.py)
