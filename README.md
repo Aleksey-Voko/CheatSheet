@@ -12,3 +12,4 @@
 * [Exceptions](core_python/exceptions.py)
 * [pathlib Path](core_python/pathlib_Path.py)
 * [decode encode](utils/decode_encode.py)
+* [List in file](utils/list_in_file.py)
