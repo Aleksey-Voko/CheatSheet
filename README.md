@@ -10,3 +10,4 @@
 * [Closures](core_python/closures.py)
 * [Decoration](core_python/decoration.py)
 * [Exceptions](core_python/exceptions.py)
+* [pathlib Path](core_python/pathlib_Path.py)
