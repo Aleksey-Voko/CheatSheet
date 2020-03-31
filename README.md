@@ -15,3 +15,4 @@
 * [List in file](utils/list_in_file.py)
 * [String constants](core_python/strings/string_constants.py)
 * [XML generator](lxml/xml_generator.py)
+* [Format phone](utils/format_phone)
