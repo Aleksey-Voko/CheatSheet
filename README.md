@@ -16,3 +16,4 @@
 * [String constants](core_python/strings/string_constants.py)
 * [XML generator](lxml/xml_generator.py)
 * [Format phone](utils/format_phone)
+* [XML prettify](lxml/xml_prettify.py)
