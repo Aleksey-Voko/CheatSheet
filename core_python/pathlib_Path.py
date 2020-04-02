@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # Create a directory
-Path('/home/%user_name%/dir_name').mkdir(exist_ok=True)
+Path('/home/%user_name%/dir_name').mkdir(parents=True, exist_ok=True)
 
 # Delete a directory
 Path('/home/%user_name%/dir_name').rmdir()
