@@ -18,3 +18,4 @@
 * [Format phone](utils/format_phone)
 * [XML prettify](lxml/xml_prettify.py)
 * [CSV utils](utils/csv_utils.py)
+* [WooCommerce utils](utils/woocommerce_utils.py)
