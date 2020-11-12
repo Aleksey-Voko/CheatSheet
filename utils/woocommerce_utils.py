@@ -1,10 +1,53 @@
 import csv
+from collections import OrderedDict
 from pathlib import Path
-from pprint import pprint
+
+# полный список возможных полей
+field_names = [
+    'ID',
+    'Тип',
+    'Артикул',
+    'Имя',
+    'Опубликован',
+    'рекомендуемый?',
+    'Видимость в каталоге',
+    'Короткое описание',
+    'Описание',
+    'Дата начала действия продажной цены',
+    'Дата окончания действия продажной цены',
+    'Статус налога',
+    'Налоговый класс',
+    'В наличии?',
+    'Запасы',
+    'Величина малых запасов',
+    'Возможен ли предзаказ?',
+    'Продано индивидуально?',
+    'Вес (kg)',
+    'Длина (cm)',
+    'Ширина (cm)',
+    'Высота (cm)',
+    'Разрешить отзывы от клиентов?',
+    'Примечание к покупке',
+    'Цена распродажи',
+    'Базовая цена',
+    'Категории',
+    'Метки',
+    'Класс доставки',
+    'Изображения',
+    'Лимит загрузок',
+    'Число дней до просроченной загрузки',
+    'Родительский',
+    'Сгруппированные товары',
+    'Апсейл',
+    'Кросселы',
+    'Внешний URL',
+    'Текст кнопки',
+    'Позиция',
+]
 
 
-def get_list_of_dicts_from_csv_file(input_file: str, encoding='utf-8',
-                                    newline='', delimiter=',') -> list:
+def get_dicts_from_csv_file(input_file: str, encoding='utf-8',
+                            newline='', delimiter=','):
     """
     читает список словарей из csv файла
 
@@ -15,17 +58,15 @@ def get_list_of_dicts_from_csv_file(input_file: str, encoding='utf-8',
 
     docs -> https://docs.python.org/3/library/csv.html
     """
-    out_list = []
     with open(Path(input_file), encoding=encoding, newline=newline) as f_in:
         csv_reader = csv.DictReader(f_in, delimiter=delimiter)
         for row in csv_reader:
-            out_list.append(row)
-    return out_list
+            yield OrderedDict(row)
 
 
-def save_list_of_dicts_to_csv_file(input_list: list, out_file: str,
-                                   fieldnames: list, encoding='utf-8',
-                                   newline='', delimiter=','):
+def save_dicts_to_csv_file(input_list: list, out_file: str,
+                           fieldnames: list, encoding='utf-8',
+                           newline='', delimiter=','):
     """
     сохраняет список словарей в csv файл,
     у всех словарей идентичные ключи
@@ -48,15 +89,15 @@ def save_list_of_dicts_to_csv_file(input_list: list, out_file: str,
         csv_writer.writerows(input_list)
 
 
-def get_product_card_dict_list(input_file: str, encoding='utf-8',
-                               newline='', delimiter=',') -> list:
+def get_product_card_dicts(input_file: str, encoding='utf-8',
+                           newline='', delimiter=','):
     """
-    Возвращает список словарей с продуктами из файла экспорта
+    Возвращает словари с продуктами из файла экспорта.
+    Группирует атрибуты продуктов.
     """
-    product_card_dict_list = []
-    product_export_card_dict_list = get_list_of_dicts_from_csv_file(input_file, encoding=encoding,
-                                                                    newline=newline, delimiter=delimiter)
-    for product_export in product_export_card_dict_list:
+    product_card_dicts = get_dicts_from_csv_file(input_file, encoding=encoding,
+                                                 newline=newline, delimiter=delimiter)
+    for product_export in product_card_dicts:
         key_list = []
         value_list = []
         for product_key in list(product_export.keys())[:]:
@@ -65,9 +106,7 @@ def get_product_card_dict_list(input_file: str, encoding='utf-8',
             elif product_key.startswith('Значение(-я) аттрибута(-ов)'):
                 value_list.append(product_key)
 
-        key_list = sorted(key_list)
         key_list = [product_export[x] for x in key_list]
-        value_list = sorted(value_list)
         value_list = [product_export[x] for x in value_list]
 
         for product_key in list(product_export.keys())[:]:
@@ -75,199 +114,55 @@ def get_product_card_dict_list(input_file: str, encoding='utf-8',
                                        'Видимость атрибута', 'Глобальный атрибут')):
                 del product_export[product_key]
 
-        product_export['Атрибуты'] = {}
+        # noinspection PyTypeChecker
+        product_export['Атрибуты'] = OrderedDict()
         for key, value in zip(key_list, value_list):
             if key and value:
+                # noinspection PyUnresolvedReferences
                 product_export['Атрибуты'][key] = value
-        product_card_dict_list.append(product_export)
-    return product_card_dict_list
+
+        yield product_export
 
 
 def get_attribute_set(input_file: str, encoding='utf-8',
                       newline='', delimiter=',') -> list:
     """
-    Возвращает список атрибутов из файла экспорта
+    Возвращает список возможных атрибутов из файла экспорта
     """
-    product_card_list = get_product_card_dict_list(input_file, encoding=encoding,
-                                                   newline=newline, delimiter=delimiter)
+    product_card_dicts = get_product_card_dicts(input_file, encoding=encoding,
+                                                newline=newline, delimiter=delimiter)
     attributes_set = set()
-    for product_card in product_card_list:
-        attributes = product_card['Атрибуты']
-        for attr in list(attributes.keys()):
+    for product_card in product_card_dicts:
+        # noinspection PyUnresolvedReferences
+        for attr in list(product_card['Атрибуты'].keys()):
             attributes_set.add(attr)
     return sorted(list(attributes_set))
 
 
-def get_import_csv_product_card_list(product_card_list: list) -> list:
+def get_import_csv_product_card_dicts(product_cards):
     """
-    Возвращает список словарей с продуктами для файла импорта
-    Для файла импорта понадобится ещё список field_names
+    Возвращает словари с продуктами для файла импорта.
+    Распределяет атрибуты по колонкам:
+        'Имя атрибута 1',
+        'Значение(-я) аттрибута(-ов) 1',
+        'Видимость атрибута 1',
+        'Глобальный атрибут 1'
+        ...
     """
-    product_out_dict_list = []
+    for product_card in product_cards:
+        new_product = OrderedDict()
+        for field_key in product_card:
+            if field_key != 'Атрибуты':
+                new_product[field_key] = product_card[field_key]
 
-    # полный список возможных полей
-    field_names = [
-        'ID',
-        'Тип',
-        'Артикул',
-        'Имя',
-        'Опубликован',
-        'рекомендуемый?',
-        'Видимость в каталоге',
-        'Короткое описание',
-        'Описание',
-        'Дата начала действия продажной цены',
-        'Дата окончания действия продажной цены',
-        'Статус налога',
-        'Налоговый класс',
-        'В наличии?',
-        'Запасы',
-        'Величина малых запасов',
-        'Возможен ли предзаказ?',
-        'Продано индивидуально?',
-        'Вес (kg)',
-        'Длина (cm)',
-        'Ширина (cm)',
-        'Высота (cm)',
-        'Разрешить отзывы от клиентов?',
-        'Примечание к покупке',
-        'Цена распродажи',
-        'Базовая цена',
-        'Категории',
-        'Метки',
-        'Класс доставки',
-        'Изображения',
-        'Лимит загрузок',
-        'Число дней до просроченной загрузки',
-        'Родительский',
-        'Сгруппированные товары',
-        'Апсейл',
-        'Кросселы',
-        'Внешний URL',
-        'Текст кнопки',
-        'Позиция',
-    ]
+        attributes_dict = OrderedDict()
+        for attr_key in product_card['Атрибуты'].keys():
+            attributes_dict[attr_key] = product_card['Атрибуты'][attr_key]
 
-    for product_card in product_card_list:
-        new_product = {}
-        for field in field_names:
-            field_value = product_card.get(field)
-            if field_value:
-                new_product[field] = field_value
+        for count, attr_key in enumerate(attributes_dict.keys(), 1):
+            new_product[f'Имя атрибута {count}'] = attr_key
+            new_product[f'Значение(-я) аттрибута(-ов) {count}'] = attributes_dict[attr_key]
+            new_product[f'Видимость атрибута {count}'] = 1
+            new_product[f'Глобальный атрибут {count}'] = 1
 
-        attributes_dict = {}
-        for key in product_card['Атрибуты'].keys():
-            attributes_dict[key] = product_card['Атрибуты'][key]
-
-        for count, key in enumerate(attributes_dict.keys(), 1):
-            if f'Имя атрибута {count}' not in field_names:
-                field_names.append(f'Имя атрибута {count}')
-            if f'Имя атрибута {count}' not in new_product.keys():
-                new_product[f'Имя атрибута {count}'] = key
-
-            if f'Значение(-я) аттрибута(-ов) {count}' not in field_names:
-                field_names.append(f'Значение(-я) аттрибута(-ов) {count}')
-            if f'Значение(-я) аттрибута(-ов) {count}' not in new_product.keys():
-                new_product[f'Значение(-я) аттрибута(-ов) {count}'] = attributes_dict[key]
-
-            if f'Видимость атрибута {count}' not in field_names:
-                field_names.append(f'Видимость атрибута {count}')
-            if f'Видимость атрибута {count}' not in new_product.keys():
-                new_product[f'Видимость атрибута {count}'] = 1
-
-            if f'Глобальный атрибут {count}' not in field_names:
-                field_names.append(f'Глобальный атрибут {count}')
-            if f'Глобальный атрибут {count}' not in new_product.keys():
-                new_product[f'Глобальный атрибут {count}'] = 1
-
-        product_out_dict_list.append(new_product)
-
-    return product_out_dict_list
-
-
-def save_import_csv_product_card_list(product_card_list: list, out_file: str,
-                                      encoding='utf-8', newline='', delimiter=','):
-    """
-    Сохраняет файл для импорта
-    """
-    product_out_dict_list = []
-
-    # полный список возможных полей
-    field_names = [
-        'ID',
-        'Тип',
-        'Артикул',
-        'Имя',
-        'Опубликован',
-        'рекомендуемый?',
-        'Видимость в каталоге',
-        'Короткое описание',
-        'Описание',
-        'Дата начала действия продажной цены',
-        'Дата окончания действия продажной цены',
-        'Статус налога',
-        'Налоговый класс',
-        'В наличии?',
-        'Запасы',
-        'Величина малых запасов',
-        'Возможен ли предзаказ?',
-        'Продано индивидуально?',
-        'Вес (kg)',
-        'Длина (cm)',
-        'Ширина (cm)',
-        'Высота (cm)',
-        'Разрешить отзывы от клиентов?',
-        'Примечание к покупке',
-        'Цена распродажи',
-        'Базовая цена',
-        'Категории',
-        'Метки',
-        'Класс доставки',
-        'Изображения',
-        'Лимит загрузок',
-        'Число дней до просроченной загрузки',
-        'Родительский',
-        'Сгруппированные товары',
-        'Апсейл',
-        'Кросселы',
-        'Внешний URL',
-        'Текст кнопки',
-        'Позиция',
-    ]
-
-    for product_card in product_card_list:
-        new_product = {}
-        for field in field_names:
-            field_value = product_card.get(field)
-            if field_value:
-                new_product[field] = field_value
-
-        attributes_dict = {}
-        for key in product_card['Атрибуты'].keys():
-            attributes_dict[key] = product_card['Атрибуты'][key]
-
-        for count, key in enumerate(attributes_dict.keys(), 1):
-            if f'Имя атрибута {count}' not in field_names:
-                field_names.append(f'Имя атрибута {count}')
-            if f'Имя атрибута {count}' not in new_product.keys():
-                new_product[f'Имя атрибута {count}'] = key
-
-            if f'Значение(-я) аттрибута(-ов) {count}' not in field_names:
-                field_names.append(f'Значение(-я) аттрибута(-ов) {count}')
-            if f'Значение(-я) аттрибута(-ов) {count}' not in new_product.keys():
-                new_product[f'Значение(-я) аттрибута(-ов) {count}'] = attributes_dict[key]
-
-            if f'Видимость атрибута {count}' not in field_names:
-                field_names.append(f'Видимость атрибута {count}')
-            if f'Видимость атрибута {count}' not in new_product.keys():
-                new_product[f'Видимость атрибута {count}'] = 1
-
-            if f'Глобальный атрибут {count}' not in field_names:
-                field_names.append(f'Глобальный атрибут {count}')
-            if f'Глобальный атрибут {count}' not in new_product.keys():
-                new_product[f'Глобальный атрибут {count}'] = 1
-
-        product_out_dict_list.append(new_product)
-
-    save_list_of_dicts_to_csv_file(product_out_dict_list, out_file, field_names,
-                                   encoding=encoding, newline=newline, delimiter=delimiter)
+        yield new_product
