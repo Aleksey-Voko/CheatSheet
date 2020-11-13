@@ -18,6 +18,7 @@
 * [CSV utils](utils/csv_utils.py)
 * [WooCommerce utils](utils/woocommerce_utils.py)
 * [Format phone](utils/format_phone)
+* [Tracer](utils/tracer.py)
 
 ### Docs ###
 * [More than one ssh account per host](docs/ssh_key.md)
