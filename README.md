@@ -19,6 +19,7 @@
 * [WooCommerce utils](utils/woocommerce_utils.py)
 * [Format phone](utils/format_phone)
 * [Tracer](utils/tracer.py)
+* [Timer](utils/timer.py)
 
 ### Docs ###
 * [More than one ssh account per host](docs/ssh_key.md)
