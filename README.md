@@ -16,6 +16,7 @@
 * [XML generator](lxml/xml_generator.py)
 * [XML prettify](lxml/xml_prettify.py)
 * [CSV utils](utils/csv_utils.py)
+* [YAML utils](utils/yaml_utils.py)
 * [WooCommerce utils](utils/woocommerce_utils.py)
 * [Format phone](utils/format_phone)
 * [Tracer](utils/tracer.py)
