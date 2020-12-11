@@ -12,6 +12,7 @@
 
 ### Attribute management ###
 * [Class Box and properties](core_python/attribute_management/box_properties.py)
+* [Class Order and descriptors](core_python/attribute_management/order_descriptors.py)
 
 ---
 
