@@ -10,6 +10,11 @@
 * [Decoration](core_python/decoration.py)
 * [pathlib Path](core_python/pathlib_Path.py)
 
+### Attribute management ###
+* [Class Box and properties](core_python/attribute_management/box_properties.py)
+
+---
+
 ## Utils ##
 * [List in file](utils/list_in_file.py)
 * [decode encode](utils/decode_encode.py)
@@ -22,6 +27,6 @@
 * [Tracer](utils/tracer.py)
 * [Timer](utils/timer.py)
 
-### Docs ###
+## Docs ##
 * [More than one ssh account per host](docs/ssh_key.md)
 * [Markdown basic syntax](docs/markdown.md)
