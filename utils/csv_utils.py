@@ -4,8 +4,8 @@ from pathlib import Path
 import numpy
 
 
-def get_list_of_dicts_from_csv_file(in_f, encoding='utf-8',
-                                    newline='', delimiter=','):
+def get_dicts_from_csv_file(in_f, encoding='utf-8',
+                            newline='', delimiter=','):
     """
     Читает список словарей из CSV-файла.
 
@@ -22,9 +22,8 @@ def get_list_of_dicts_from_csv_file(in_f, encoding='utf-8',
             yield row
 
 
-def save_list_of_dicts_to_csv_file(in_list, out_f, field_names,
-                                   encoding='utf-8', newline='',
-                                   delimiter=','):
+def save_dicts_to_csv_file(in_list, out_f, field_names,
+                           encoding='utf-8', newline='', delimiter=','):
     """
     Сохраняет список словарей в CSV-файл.
 
@@ -44,8 +43,8 @@ def save_list_of_dicts_to_csv_file(in_list, out_f, field_names,
         csv_writer.writerows(in_list)
 
 
-def get_list_of_lists_from_csv_file(in_f, encoding='utf-8',
-                                    newline='', delimiter=','):
+def get_lists_from_csv_file(in_f, encoding='utf-8',
+                            newline='', delimiter=','):
     """
     Читает список списков из CSV-файла.
     Первый список - заголовки колонок CSV-файла.
@@ -63,8 +62,8 @@ def get_list_of_lists_from_csv_file(in_f, encoding='utf-8',
             yield row
 
 
-def save_list_to_csv_file(in_list, out_f, encoding='utf-8',
-                          newline='', delimiter=','):
+def save_lists_to_csv_file(in_list, out_f, encoding='utf-8',
+                           newline='', delimiter=','):
     """
     Сохраняет список списков в CSV-файл.
     Первый список - заголовки колонок CSV-файла.
@@ -118,7 +117,7 @@ def save_parts_csv(in_f, count_parts, encoding='utf-8',
             dict_list.append(row)
     parts = numpy.array_split(dict_list, count_parts)
     for count, part in enumerate(parts, 1):
-        save_list_of_dicts_to_csv_file(
+        save_dicts_to_csv_file(
             part,
             f'{Path(in_f).name}_{count:03}.csv',
             field_names
