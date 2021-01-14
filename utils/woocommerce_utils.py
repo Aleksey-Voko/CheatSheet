@@ -46,91 +46,103 @@ field_names = [
 ]
 
 
-def get_dicts_from_csv_file(input_file: str, encoding='utf-8',
+def get_dicts_from_csv_file(in_f, encoding='utf-8',
                             newline='', delimiter=','):
     """
-    читает список словарей из csv файла
+    Читает список словарей из CSV-файла.
 
-    newline='' исправляет '\r\r\n' -> '\r\n'
-    https://docs.python.org/3/library/csv.html#id3
-
-    delimiter - разделитель [,] or [;]
-
-    docs -> https://docs.python.org/3/library/csv.html
+    :param in_f: CSV-файл
+    :param encoding: кодировка CSV-файла
+    :param newline: newline='' исправляет '\r\r\n' -> '\r\n'
+        https://docs.python.org/3/library/csv.html#id3
+    :param delimiter: разделитель [,] or [;]
+    :return: генератор списка, содержащего словари
     """
-    with open(Path(input_file), encoding=encoding, newline=newline) as f_in:
+    with open(Path(in_f), encoding=encoding, newline=newline) as f_in:
         csv_reader = csv.DictReader(f_in, delimiter=delimiter)
         for row in csv_reader:
-            yield OrderedDict(row)
+            yield row
 
 
-def save_dicts_to_csv_file(input_list: list, out_file: str,
-                           fieldnames: list, encoding='utf-8',
-                           newline='', delimiter=','):
+def save_dicts_to_csv_file(in_list, out_f, field_names,
+                           encoding='utf-8', newline='', delimiter=','):
     """
-    сохраняет список словарей в csv файл,
-    у всех словарей идентичные ключи
+    Сохраняет список словарей в CSV-файл.
 
-    fieldnames - порядок ключей для записи в файл ->
-    fieldnames = ['first_name', 'last_name']
-
-    newline '\r\r\n' -> '\r\n'
-    https://docs.python.org/3/library/csv.html#id3
-
-    delimiter - разделитель [,] or [;]
-
-    docs -> https://docs.python.org/3/library/csv.html
+    :param in_list: список, содержащий словари
+    :param out_f: CSV-файл
+    :param field_names: список заголовков колонок CSV-файла
+    :param encoding: кодировка CSV-файла
+    :param newline: newline: newline='' исправляет '\r\r\n' -> '\r\n'
+        https://docs.python.org/3/library/csv.html#id3
+    :param delimiter: разделитель [,] or [;]
     """
-    Path(out_file).parent.mkdir(parents=True, exist_ok=True)
-    with open(out_file, 'w', encoding=encoding, newline=newline) as f_out:
-        csv_writer = csv.DictWriter(f_out, fieldnames=fieldnames,
+    Path(out_f).parent.mkdir(parents=True, exist_ok=True)
+    with open(out_f, 'w', encoding=encoding, newline=newline) as f_out:
+        csv_writer = csv.DictWriter(f_out, fieldnames=field_names,
                                     delimiter=delimiter)
         csv_writer.writeheader()
-        csv_writer.writerows(input_list)
+        csv_writer.writerows(in_list)
 
 
-def get_product_card_dicts(input_file: str, encoding='utf-8',
+def get_product_card_dicts(in_f, encoding='utf-8',
                            newline='', delimiter=','):
     """
-    Возвращает словари с продуктами из файла экспорта.
-    Группирует атрибуты продуктов.
+    Читает словари с продуктами из файла экспорта.
+
+    :param in_f: CSV-файл экспорта
+    :param encoding: кодировка CSV-файла
+    :param newline: newline='' исправляет '\r\r\n' -> '\r\n'
+        https://docs.python.org/3/library/csv.html#id3
+    :param delimiter: разделитель [,] or [;]
+    :return: генератор списка, содержащего словари с продуктами
     """
-    product_card_dicts = get_dicts_from_csv_file(input_file, encoding=encoding,
-                                                 newline=newline, delimiter=delimiter)
-    for product_export in product_card_dicts:
+    product_card_dicts = get_dicts_from_csv_file(in_f, encoding=encoding,
+                                                 newline=newline,
+                                                 delimiter=delimiter)
+    for product in product_card_dicts:
         key_list = []
         value_list = []
-        for product_key in list(product_export.keys())[:]:
+        for product_key in list(product.keys())[:]:
             if product_key.startswith('Имя атрибута'):
                 key_list.append(product_key)
             elif product_key.startswith('Значение(-я) аттрибута(-ов)'):
                 value_list.append(product_key)
 
-        key_list = [product_export[x] for x in key_list]
-        value_list = [product_export[x] for x in value_list]
+        key_list = [product[x] for x in key_list]
+        value_list = [product[x] for x in value_list]
 
-        for product_key in list(product_export.keys())[:]:
-            if product_key.startswith(('Имя атрибута', 'Значение(-я) аттрибута(-ов)',
-                                       'Видимость атрибута', 'Глобальный атрибут')):
-                del product_export[product_key]
+        for product_key in list(product.keys())[:]:
+            if product_key.startswith((
+                    'Имя атрибута', 'Значение(-я) аттрибута(-ов)',
+                    'Видимость атрибута', 'Глобальный атрибут')):
+                del product[product_key]
 
         # noinspection PyTypeChecker
-        product_export['Атрибуты'] = OrderedDict()
+        product['Атрибуты'] = OrderedDict()
         for key, value in zip(key_list, value_list):
             if key and value:
                 # noinspection PyUnresolvedReferences
-                product_export['Атрибуты'][key] = value
+                product['Атрибуты'][key] = value
 
-        yield product_export
+        yield product
 
 
-def get_attribute_set(input_file: str, encoding='utf-8',
-                      newline='', delimiter=',') -> list:
+def get_attribute_set(in_f, encoding='utf-8',
+                      newline='', delimiter=','):
     """
-    Возвращает список возможных атрибутов из файла экспорта
+    Читает список возможных атрибутов из файла экспорта.
+
+    :param in_f: CSV-файл экспорта
+    :param encoding: кодировка CSV-файла
+    :param newline: newline='' исправляет '\r\r\n' -> '\r\n'
+        https://docs.python.org/3/library/csv.html#id3
+    :param delimiter: разделитель [,] or [;]
+    :return: сортированный список атрибутов продукта
     """
-    product_card_dicts = get_product_card_dicts(input_file, encoding=encoding,
-                                                newline=newline, delimiter=delimiter)
+    product_card_dicts = get_product_card_dicts(in_f, encoding=encoding,
+                                                newline=newline,
+                                                delimiter=delimiter)
     attributes_set = set()
     for product_card in product_card_dicts:
         # noinspection PyUnresolvedReferences
@@ -139,15 +151,13 @@ def get_attribute_set(input_file: str, encoding='utf-8',
     return sorted(list(attributes_set))
 
 
-def get_import_csv_product_card_dicts(product_cards):
+def get_import_product_card_dicts(product_cards):
     """
     Возвращает словари с продуктами для файла импорта.
-    Распределяет атрибуты по колонкам:
-        'Имя атрибута 1',
-        'Значение(-я) аттрибута(-ов) 1',
-        'Видимость атрибута 1',
-        'Глобальный атрибут 1'
-        ...
+    Распределяет атрибуты по колонкам.
+
+    :param product_cards: список словарей, содержащих продукты
+    :return: генератор списка словарей, содержащих продукты для импорта.
     """
     for product_card in product_cards:
         new_product = OrderedDict()
@@ -161,7 +171,9 @@ def get_import_csv_product_card_dicts(product_cards):
 
         for count, attr_key in enumerate(attributes_dict.keys(), 1):
             new_product[f'Имя атрибута {count}'] = attr_key
-            new_product[f'Значение(-я) аттрибута(-ов) {count}'] = attributes_dict[attr_key]
+            new_product[
+                f'Значение(-я) аттрибута(-ов) {count}'
+            ] = attributes_dict[attr_key]
             new_product[f'Видимость атрибута {count}'] = 1
             new_product[f'Глобальный атрибут {count}'] = 1
 
